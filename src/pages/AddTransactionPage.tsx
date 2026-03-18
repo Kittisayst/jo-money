@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router'
 import { ArrowLeft } from 'lucide-react'
 import { toast } from 'sonner'
 import { TransactionForm } from '@/components/transactions/TransactionForm'
+import { ReceiptScanner } from '@/components/transactions/ReceiptScanner'
 import { useTransactionStore } from '@/store/transaction-store'
 import { useCategoryStore } from '@/store/category-store'
 import { useAuthStore } from '@/store/auth-store'
@@ -29,6 +30,8 @@ export default function AddTransactionPage() {
       setIsReady(true)
     }
   }, [isCatInitialized])
+
+  const [scannedData, setScannedData] = useState<Partial<TransactionFormData> | null>(null)
 
   const handleSubmit = async (data: TransactionFormData) => {
     if (!user) return
@@ -66,7 +69,7 @@ export default function AddTransactionPage() {
       </header>
 
       {/* Main Content */}
-      <main className="flex-1 p-4">
+      <main className="flex-1 p-4 space-y-6">
         {!isReady ? (
           <div className="flex justify-center p-10 mt-10">
             <div className="animate-pulse flex flex-col items-center gap-4">
@@ -75,12 +78,17 @@ export default function AddTransactionPage() {
             </div>
           </div>
         ) : (
-          <div className="glass-card p-5">
-            <TransactionForm 
-              onSubmit={handleSubmit} 
-              isLoading={isTxLoading} 
-            />
-          </div>
+          <>
+            <ReceiptScanner onScanComplete={(data: any) => setScannedData(data)} />
+            
+            <div className="glass-card p-5">
+              <TransactionForm 
+                onSubmit={handleSubmit} 
+                isLoading={isTxLoading}
+                initialData={scannedData as any}
+              />
+            </div>
+          </>
         )}
       </main>
     </div>

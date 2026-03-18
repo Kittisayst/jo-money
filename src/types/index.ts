@@ -26,6 +26,7 @@ export interface User {
   username: string
   password?: string
   displayName: string
+  email?: string
   currency: Currency
   language: Language
   theme: Theme

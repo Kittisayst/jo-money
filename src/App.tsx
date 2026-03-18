@@ -12,6 +12,8 @@ import CategoriesPage from '@/pages/CategoriesPage'
 import LoginPage from '@/pages/LoginPage'
 import RegisterPage from '@/pages/RegisterPage'
 import EditTransactionPage from '@/pages/EditTransactionPage'
+import ProfilePage from '@/pages/ProfilePage'
+import ChangePasswordPage from '@/pages/ChangePasswordPage'
 import { useThemeStore } from '@/store/theme-store'
 
 const router = createHashRouter([
@@ -29,6 +31,8 @@ const router = createHashRouter([
           { path: 'add', element: <AddTransactionPage /> },
           { path: 'reports', element: <ReportsPage /> },
           { path: 'settings', element: <SettingsPage /> },
+          { path: 'settings/profile', element: <ProfilePage /> },
+          { path: 'settings/change-password', element: <ChangePasswordPage /> },
           { path: 'settings/categories', element: <CategoriesPage /> },
         ],
       },

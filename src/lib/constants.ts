@@ -44,7 +44,8 @@ export const PAGE_TITLES: Record<string, string> = {
   '/add': 'ເພີ່ມລາຍການ',
   '/reports': 'ລາຍງານ',
   '/settings': 'ຕັ້ງຄ່າ',
-  '/categories': 'ໝວດໝູ່',
+  '/settings/profile': 'ຂໍ້ມູນສ່ວນຕົວ',
+  '/settings/categories': 'ໝວດໝູ່',
   '/login': 'ເຂົ້າສູ່ລະບົບ',
   '/register': 'ລົງທະບຽນ',
 }

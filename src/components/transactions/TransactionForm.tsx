@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { format, parse } from 'date-fns'
@@ -73,6 +73,21 @@ export function TransactionForm({
   const [displayAmount, setDisplayAmount] = useState(
     initialData?.amount ? formatNumber(initialData.amount) : ''
   )
+
+  // ອັບເດດຂໍ້ມູນໃນຟອມເມື່ອ initialData ປ່ຽນ (ໃຊ້ໃນການ Scan)
+  useEffect(() => {
+    if (initialData) {
+      form.reset({
+        type: initialData.type,
+        amount: initialData.amount,
+        categoryId: initialData.categoryId || '',
+        note: initialData.note || '',
+        date: initialData.date,
+        imageUrl: initialData.imageUrl || '',
+      })
+      setDisplayAmount(formatNumber(initialData.amount))
+    }
+  }, [initialData, form])
 
 
   const currentType = form.watch('type')
