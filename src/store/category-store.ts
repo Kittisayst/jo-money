@@ -128,7 +128,10 @@ export const useCategoryStore = create<CategoryState>()(
       }
     }),
     {
-      name: 'jo-money-categories',
+      name: 'jo-money-categories-v2',
+      partialize: (state) => ({ 
+        categories: state.categories 
+      }),
     }
   )
 )

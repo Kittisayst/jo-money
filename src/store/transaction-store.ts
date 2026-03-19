@@ -149,7 +149,10 @@ export const useTransactionStore = create<TransactionState>()(
       }
     }),
     {
-      name: 'jo-money-transactions',
+      name: 'jo-money-transactions-v2',
+      partialize: (state) => ({ 
+        transactions: state.transactions 
+      }),
     }
   )
 )
