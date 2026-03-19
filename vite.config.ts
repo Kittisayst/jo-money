@@ -18,6 +18,7 @@ export default defineConfig({
         background_color: '#ffffff',
         display: 'standalone',
         orientation: 'portrait',
+        scope: '/jo-money/',
         start_url: '/jo-money/',
         icons: [
           {
