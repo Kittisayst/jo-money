@@ -2,8 +2,8 @@ import { useLocation, useNavigate } from 'react-router'
 import {
   LayoutDashboard,
   ArrowLeftRight,
+  PiggyBank,
   BarChart3,
-  Settings,
   Plus,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -12,8 +12,8 @@ const navItems = [
   { path: '/', icon: LayoutDashboard, label: 'ໜ້າຫຼັກ' },
   { path: '/transactions', icon: ArrowLeftRight, label: 'ລາຍການ' },
   { path: '__fab__', icon: Plus, label: 'ເພີ່ມ' },
+  { path: '/savings', icon: PiggyBank, label: 'ການເງິນ' },
   { path: '/reports', icon: BarChart3, label: 'ລາຍງານ' },
-  { path: '/settings', icon: Settings, label: 'ຕັ້ງຄ່າ' },
 ]
 
 export function BottomNav() {
@@ -40,7 +40,10 @@ export function BottomNav() {
               )
             }
 
-            const isActive = location.pathname === item.path
+            const isFinanceItem = item.path === '/savings'
+            const isActive = isFinanceItem
+              ? ['/savings', '/assets', '/liabilities', '/net-worth', '/financial-health'].some((p) => location.pathname.startsWith(p))
+              : location.pathname === item.path || (item.path === '/reports' && location.pathname.startsWith('/reports'))
             const Icon = item.icon
 
             return (

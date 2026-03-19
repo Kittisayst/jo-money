@@ -184,3 +184,14 @@
 .rdp-root .rdp-button_next:hover {
   background-color: hsl(var(--accent));
 }
+
+@layer utilities {
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}

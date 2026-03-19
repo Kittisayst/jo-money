@@ -36,3 +36,22 @@ export function formatDateLao(dateStr: string): string {
     day: 'numeric',
   }).format(date)
 }
+
+/**
+ * Format numeric input string as grouped integer (e.g. 1000000 -> 1,000,000)
+ */
+export function formatIntegerInput(value: string): string {
+  const digitsOnly = value.replace(/\D/g, '')
+  if (!digitsOnly) return ''
+
+  return new Intl.NumberFormat('en-US', {
+    maximumFractionDigits: 0,
+  }).format(Number(digitsOnly))
+}
+
+/**
+ * Parse grouped integer input string (e.g. 1,000,000 -> 1000000)
+ */
+export function parseIntegerInput(value: string): number {
+  return Number(value.replace(/,/g, ''))
+}

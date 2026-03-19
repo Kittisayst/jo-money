@@ -8,6 +8,7 @@ import { useCategoryStore } from '@/store/category-store'
 import { useAuthStore } from '@/store/auth-store'
 import type { TransactionFormData } from '@/schemas'
 import type { Transaction } from '@/types'
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog"
 
 export default function EditTransactionPage() {
   const { id } = useParams<{ id: string }>()
@@ -17,6 +18,8 @@ export default function EditTransactionPage() {
   const { fetchCategories, initialized: isCatInitialized, isLoading: isCatLoading } = useCategoryStore()
   
   const [transaction, setTransaction] = useState<Transaction | null>(null)
+  const [transactionToDelete, setTransactionToDelete] = useState<string | null>(null)
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
 
   // ດຶງຂໍ້ມູນພື້ນຖານຖ້າຍັງບໍ່ມີ (ເຊັ່ນ: ກໍລະນີ Refresh ໜ້າຈໍນີ້ໂດຍກົງ)
   useEffect(() => {
@@ -61,14 +64,21 @@ export default function EditTransactionPage() {
 
   const handleDelete = async () => {
     if (!id) return
-    if (confirm('ທ່ານຕ້ອງການລຶບລາຍການນີ້ແທ້ບໍ່?')) {
-      const success = await deleteTransaction(id)
+    setTransactionToDelete(id)
+    setShowDeleteDialog(true)
+  }
+
+  const confirmDeleteTransaction = async () => {
+    if (transactionToDelete) {
+      const success = await deleteTransaction(transactionToDelete)
       if (success) {
         toast.success('ລຶບລາຍການສຳເລັດແລ້ວ!')
         navigate('/transactions')
       } else {
         toast.error('ບໍ່ສາມາດລຶບໄດ້')
       }
+      setShowDeleteDialog(false)
+      setTransactionToDelete(null)
     }
   }
 
@@ -111,6 +121,23 @@ export default function EditTransactionPage() {
           </div>
         )}
       </main>
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>ຢືນຢັນການລຶບ</AlertDialogTitle>
+            <AlertDialogDescription>
+              ທ່ານຕ້ອງການລຶບລາຍການນີ້ແທ້ບໍ່? ການດຳເນີນການນີ້ບໍ່ສາມາດຍົກເລີກໄດ້.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>ຍົກເລີກ</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmDeleteTransaction} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+              ລຶບ
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }

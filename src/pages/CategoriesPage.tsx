@@ -7,6 +7,7 @@ import { useCategoryStore } from '@/store/category-store'
 import { useAuthStore } from '@/store/auth-store'
 import { cn } from '@/lib/utils'
 import type { Category, TransactionType } from '@/types'
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog"
 
 // Hoist static arrays outside component to avoid recreation
 const ICONS = ['💰', '💼', '🛍️', '🍔', '🏠', '📱', '🚗', '👕', '🏥', '📚', '🎮', '🎁', '✈️', '💸', '🛒']
@@ -25,6 +26,8 @@ export default function CategoriesPage() {
   
   const [editingCategory, setEditingCategory] = useState<Category | null>(null)
   const [formData, setFormData] = useState(INITIAL_FORM_DATA)
+  const [categoryToDelete, setCategoryToDelete] = useState<string | null>(null)
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
 
   // Memoize derived state to avoid recalculation
   const { incomeCategories, expenseCategories } = useMemo(() => {
@@ -88,10 +91,17 @@ export default function CategoriesPage() {
   }, [])
 
   const handleDelete = useCallback(async (categoryId: string) => {
-    if (confirm('ທ່ານແນ່ໃຈບໍ່ທີ່ຕ້ອງການລຶບໝວດນີ້?')) {
-      await deleteCategory(categoryId)
+    setCategoryToDelete(categoryId)
+    setShowDeleteDialog(true)
+  }, [])
+
+  const confirmDeleteCategory = useCallback(async () => {
+    if (categoryToDelete) {
+      await deleteCategory(categoryToDelete)
+      setShowDeleteDialog(false)
+      setCategoryToDelete(null)
     }
-  }, [deleteCategory])
+  }, [categoryToDelete, deleteCategory])
 
   const handleCancel = useCallback(() => {
     resetForm()
@@ -324,6 +334,23 @@ export default function CategoriesPage() {
           </CardContent>
         </Card>
       )}
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>ຢືນຢັນການລຶບ</AlertDialogTitle>
+            <AlertDialogDescription>
+              ທ່ານແນ່ໃຈບໍ່ທີ່ຕ້ອງການລຶບໝວດນີ້? ການດຳເນີນການນີ້ບໍ່ສາມາດຍົກເລີກໄດ້.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>ຍົກເລີກ</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmDeleteCategory} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+              ລຶບ
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }

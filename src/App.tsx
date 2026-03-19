@@ -3,12 +3,19 @@ import { createHashRouter, RouterProvider } from 'react-router'
 import { Toaster } from 'sonner'
 import { AppLayout } from '@/components/layout/AppLayout'
 import { ProtectedRoute } from '@/components/layout/ProtectedRoute'
+import { FinanceLayout } from '@/components/layout/FinanceLayout'
 import DashboardPage from '@/pages/DashboardPage'
 import TransactionsPage from '@/pages/TransactionsPage'
 import AddTransactionPage from '@/pages/AddTransactionPage'
 import ReportsPage from '@/pages/ReportsPage'
 import SettingsPage from '@/pages/SettingsPage'
 import CategoriesPage from '@/pages/CategoriesPage'
+import SavingsPage from '@/pages/SavingsPage'
+import AddSavingsGoalPage from '@/pages/AddSavingsGoalPage'
+import AssetsPage from '@/pages/AssetsPage'
+import LiabilitiesPage from '@/pages/LiabilitiesPage'
+import NetWorthPage from '@/pages/NetWorthPage'
+import FinancialHealthPage from '@/pages/FinancialHealthPage'
 import LoginPage from '@/pages/LoginPage'
 import RegisterPage from '@/pages/RegisterPage'
 import EditTransactionPage from '@/pages/EditTransactionPage'
@@ -30,6 +37,19 @@ const router = createHashRouter([
           { path: 'transactions/:id/edit', element: <EditTransactionPage /> },
           { path: 'add', element: <AddTransactionPage /> },
           { path: 'reports', element: <ReportsPage /> },
+          // Finance Hub — sub-pages share FinanceTabBar
+          {
+            element: <FinanceLayout />,
+            children: [
+              { path: 'savings', element: <SavingsPage /> },
+              { path: 'assets', element: <AssetsPage /> },
+              { path: 'liabilities', element: <LiabilitiesPage /> },
+              { path: 'net-worth', element: <NetWorthPage /> },
+              { path: 'financial-health', element: <FinancialHealthPage /> },
+            ],
+          },
+          { path: 'savings/new', element: <AddSavingsGoalPage /> },
+          { path: 'savings/:id/edit', element: <AddSavingsGoalPage /> },
           { path: 'settings', element: <SettingsPage /> },
           { path: 'settings/profile', element: <ProfilePage /> },
           { path: 'settings/change-password', element: <ChangePasswordPage /> },
@@ -53,7 +73,20 @@ function App() {
   return (
     <>
       <RouterProvider router={router} />
-      <Toaster position="top-center" theme={theme} richColors />
+      <Toaster
+        position="top-center"
+        theme={theme}
+        richColors
+        toastOptions={{
+          classNames: {
+            toast: 'font-lao',
+            title: 'font-lao',
+            description: 'font-lao',
+            actionButton: 'font-lao',
+            cancelButton: 'font-lao',
+          },
+        }}
+      />
     </>
   )
 }
