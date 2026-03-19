@@ -43,7 +43,7 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
     },
   },
-  base: './',
+  base: '/jo-money/',
   server: {
     proxy: {
       '/api': {
