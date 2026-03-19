@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router'
-import { Search, SlidersHorizontal, ArrowLeftRight, Loader2, X } from 'lucide-react'
+import { Search, SlidersHorizontal, ArrowLeftRight, Loader2 } from 'lucide-react'
 import { format, isToday, isYesterday } from 'date-fns'
 import { cn } from '@/lib/utils'
 
