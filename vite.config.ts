@@ -9,7 +9,7 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.svg', 'icons.svg'],
+      includeAssets: ['favicon.ico', 'icons/icon-192x192.png', 'icons/icon-512x512.png'],
       manifest: {
         name: 'Jo-Money - ບັນທຶກລາຍຮັບລາຍຈ່າຍ',
         short_name: 'Jo-Money',
@@ -18,18 +18,16 @@ export default defineConfig({
         background_color: '#ffffff',
         display: 'standalone',
         orientation: 'portrait',
-        scope: '/jo-money/',
-        start_url: '/jo-money/',
         icons: [
           {
-            src: 'favicon.svg',
+            src: 'icons/icon-192x192.png',
             sizes: '192x192',
-            type: 'image/svg+xml',
+            type: 'image/png',
           },
           {
-            src: 'favicon.svg',
+            src: 'icons/icon-512x512.png',
             sizes: '512x512',
-            type: 'image/svg+xml',
+            type: 'image/png',
             purpose: 'any maskable',
           },
         ],
