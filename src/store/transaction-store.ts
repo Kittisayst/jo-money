@@ -31,8 +31,13 @@ export const useTransactionStore = create<TransactionState>()(
           
           if (response.status === 'success') {
             const allTx = (response.data || []) as Transaction[]
-            // ກັ່ນຕອງເອົາສະເພາະຂອງ User ທີ່ Login
-            const userTx = allTx.filter(t => String(t.userId) === String(userId))
+            // ກັ່ນຕອງເອົາສະເພາະຂອງ User ທີ່ Login ແລະ ແປງ amount ເປັນ Number
+            const userTx = allTx
+              .filter(t => String(t.userId) === String(userId))
+              .map(t => ({
+                ...t,
+                amount: Number(t.amount) || 0
+              }))
             
             // ລຽງລຳດັບຈາກໃໝ່ຫາເກົ່າ
             userTx.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
@@ -52,6 +57,7 @@ export const useTransactionStore = create<TransactionState>()(
           const now = new Date().toISOString()
           const newTransaction = {
             ...transactionData,
+            amount: Number(transactionData.amount) || 0,
             id: crypto.randomUUID(),
             createdAt: now,
             updatedAt: now
@@ -90,6 +96,7 @@ export const useTransactionStore = create<TransactionState>()(
               const newData = { 
                 ...targetTx, 
                 ...updatedData,
+                ...(updatedData.amount !== undefined && { amount: Number(updatedData.amount) }),
                 updatedAt: new Date().toISOString() // ອັບເດດເວລາ
               }
               
