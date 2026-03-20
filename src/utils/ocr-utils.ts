@@ -103,9 +103,11 @@ function parseBcelReceipt(text: string): ParsedReceipt | null {
   // ຊອກຫາຕົວເລກ ທີ່ມີເຄື່ອງໝາຍຈຸດ ຫຼື ຈຸດທົດສະນິຍົມ ແລະ ອາດຈະຕາມຫຼັງດ້ວຍ LAK ຫຼື ₭
   // Regex ນີ້ຈະຢືດຢຸ່ນຫຼາຍຂຶ້ນ
   const amountPatterns = [
-    /([\d,]+\.\d{2})\s*(?:LAK|₭|lak)/gi, // 280,000.00 LAK
+    /([\d,]+(?:\.\d{2})?)\s*(?:LAK|₭|lak)/gi, // 280,000.00 LAK
+    /([\d,]+)\s*[oO0]{2}\s*(?:LAK|₭|lak)/gi, // 10,000 oo LAK (OCR error)
     /([\d,]+\.\d{2})/gi,                // 280,000.00 (ແບບບໍ່ມີ LAK)
-    /ເງິນ(?:ເຂົ້າ|ອອກ)\s*\n?([\d,]+\.\d{2})/gi // ເງິນເຂົ້າ 280,000.00
+    /ເງິນ(?:ເຂົ້າ|ອອກ)\s*\n?([\d,]+(?:\.\d{2})?)/gi, // ເງິນເຂົ້າ 280,000.00
+    /ເງິນ(?:ເຂົ້າ|ອອກ)\s*\n?([\d,]+)\s*[oO0]{2}/gi // ເງິນເຂົ້າ 10,000 oo (OCR error)
   ];
 
   const foundAmounts: number[] = [];
@@ -140,6 +142,16 @@ function parseBcelReceipt(text: string): ParsedReceipt | null {
   
   const noteParts = [];
 
+  // ເອົາ "ເລກອ້າງອີງ" ຫຼື "Reference" ມາເປັນ Note ກ່ອນຖ້າມີ
+  const refIndex = lines.findIndex(l => l === 'ເລກອ້າງອີງ' || l.includes('Reference'));
+  if (refIndex !== -1 && lines[refIndex + 1]) {
+    const refText = lines[refIndex + 1];
+    // ກວດສອບບໍ່ໃຫ້ເອົາວັນທີ ຫຼື ບັນຊີມາໃສ່
+    if (!refText.includes('Account') && !/\d{2}\/\d{2}\/\d{4}/.test(refText) && !refText.includes('ຈາກບັນຊີ')) {
+      noteParts.push(refText);
+    }
+  }
+
   // ພະຍາຍາມຊອກຫາ "ຮ້ານ" ກ່ອນ (ເພາະໃນ OnePay ຈະຢູ່ລຸ່ມ ແລະ ເປັນຊື່ຜູ້ຮັບແທ້)
   let foundIndex = lines.findIndex(l => l === 'ຮ້ານ' || l === 'ຈາກບັນຊີ' || l === 'ລາຍລະອຽດ');
   
@@ -161,12 +173,17 @@ function parseBcelReceipt(text: string): ParsedReceipt | null {
     const isAccount = /Account|121-12-00/.test(targetValue);
 
     if (!isDate && !isAccount) {
-      noteParts.push(targetValue);
+      if (!noteParts.includes(targetValue)) {
+        noteParts.push(targetValue);
+      }
     } else {
       // ຖ້າແຖວຕໍ່ຈາກ keyword ຍັງເປັນ Account/Date ໃຫ້ລອງຫາແຖວອື່ນທີ່ມີຊື່ຄົນ ຫຼື ຊື່ຮ້ານ
       const merchantLine = lines.find((l, idx) => idx > foundIndex && (l.includes('ນາງ') || l.includes('ທ້າວ') || l.includes('ຮ້ານ') || (l.length > 5 && !l.includes('202') && !l.includes('Account'))));
       if (merchantLine) {
-        noteParts.push(merchantLine.replace('ຮ້ານ', '').trim());
+        const cleanMerchant = merchantLine.replace('ຮ້ານ', '').trim();
+        if (!noteParts.includes(cleanMerchant)) {
+          noteParts.push(cleanMerchant);
+        }
       }
     }
   }
